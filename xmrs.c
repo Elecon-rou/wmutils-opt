@@ -57,11 +57,10 @@ mresize(xcb_window_t win) {
 
 	geom = xcb_get_geometry_reply(conn, xcb_get_geometry(conn, win), NULL);
 	xcb_warp_pointer(conn, XCB_NONE, win, 0, 0, 0, 0,
-			geom->width/2, geom->height/2);
+			geom->width, geom->height);
 
 	if (!geom)
 		errx(1, "could not get window size");
-
 	orig_width = geom->width;
 	orig_height = geom->height;
 
@@ -102,8 +101,8 @@ mresize(xcb_window_t win) {
 		values[0] = MAX(1, ptr->root_x - geom->x - 2 * geom->border_width);
 		values[1] = MAX(1, ptr->root_y - geom->y - 2 * geom->border_width);
 
-
-		if (values[0] >= 0 && values[1] >= 0)
+		if(values[0] < 50) values[0] = 50;
+		if(values[1] < 50) values[1] = 50;
 			xcb_configure_window(conn, win, XCB_CONFIG_WINDOW_WIDTH
 					| XCB_CONFIG_WINDOW_HEIGHT, values);
 		xcb_flush(conn);
